@@ -1,19 +1,29 @@
 {
    "name": "social-media-backend",
    "version": "1.0.0",
-   "description": "A backend for social media application",
    "main": "index.js",
    "type": "module",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "dev": "nodemon src/index.js"
+      "dev": "nodemon src/server.js"
    },
-   "author": "Harsh Tambe",
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/iamharshtambe/social-media-backend.git"
+   },
+   "keywords": [],
+   "author": "",
    "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/iamharshtambe/social-media-backend/issues"
+   },
+   "homepage": "https://github.com/iamharshtambe/social-media-backend#readme",
+   "description": "",
    "dependencies": {
       "express": "^5.1.0"
    },
    "devDependencies": {
+      "@types/express": "^5.0.3",
       "nodemon": "^3.1.10"
    }
 }
