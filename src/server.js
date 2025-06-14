@@ -1,18 +1,17 @@
 import express from 'express';
+import { adminAuth } from './middlewares/auth.js';
 
 const app = express();
 const port = 5000;
 
-app.get('/request', (req, res) => {
-   res.send('This is GET request!');
+app.use('/admin', adminAuth);
+
+app.get('/admin/addData', (req, res) => {
+   res.send('Data added successfully...');
 });
 
-app.post('/request', (req, res) => {
-   res.send('This is POST request!');
-});
-
-app.use('/test', (req, res) => {
-   res.send('Hello, World!');
+app.get('/admin/deleteData', (req, res) => {
+   res.send('Data deleted successfully...');
 });
 
 app.listen(port, () => {
