@@ -7,6 +7,7 @@ const port = 5000;
 
 app.use(express.json());
 
+// api to post user
 app.post('/signup', async (req, res) => {
    const user = new User(req.body);
 
@@ -14,10 +15,11 @@ app.post('/signup', async (req, res) => {
       await user.save();
       res.send('User added successfully');
    } catch (err) {
-      res.status(400).send('Error:' + err.message);
+      res.status(404).send(`Error: ${err.message}`);
    }
 });
 
+// api to get user by email
 app.get('/user', async (req, res) => {
    try {
       const users = await User.find({ email: req.body.email });
@@ -28,16 +30,37 @@ app.get('/user', async (req, res) => {
          res.send(users);
       }
    } catch (err) {
-      res.send('Error:', err);
+      res.status(404).send(`Error: ${err.message}`);
    }
 });
 
+// api to get feed
 app.get('/feed', async (req, res) => {
    try {
       const users = await User.find({});
       res.send(users);
    } catch (error) {
-      res.send('Error:', error);
+      res.status(404).send(`Error: ${err.message}`);
+   }
+});
+
+// api tp delete user by id
+app.delete('/user', async (req, res) => {
+   try {
+      await User.findByIdAndDelete(req.body.id);
+      res.send('User deleted successfully');
+   } catch (err) {
+      res.status(404).send(`Error: ${err.message}`);
+   }
+});
+
+// api to update user data
+app.patch('/user', async (req, res) => {
+   try {
+      await User.findByIdAndUpdate(req.body.id, req.body);
+      res.send('User updated successfully');
+   } catch (err) {
+      res.status(404).send(`Error: ${err.message}`);
    }
 });
 
