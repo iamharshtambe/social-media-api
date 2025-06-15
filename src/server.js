@@ -5,21 +5,16 @@ import { User } from './models/user.js';
 const app = express();
 const port = 5000;
 
+app.use(express.json());
+
 app.post('/signup', async (req, res) => {
-   const user = new User({
-      firstName: 'Harsh',
-      lastName: 'Tambe',
-      email: 'harshtambe19@gmaul.com',
-      password: '241331',
-      age: 21,
-      gender: 'Male',
-   });
+   const user = new User(req.body);
 
    try {
       await user.save();
       res.send('User added successfully');
    } catch (err) {
-      res.send('Error:' + err.message);
+      res.status(400).send('Error:' + err.message);
    }
 });
 
