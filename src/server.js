@@ -15,9 +15,12 @@ app.post('/signup', async (req, res) => {
       gender: 'Male',
    });
 
-   await user.save();
-
-   res.send('User added successfully');
+   try {
+      await user.save();
+      res.send('User added successfully');
+   } catch (err) {
+      res.send('Error:' + err.message);
+   }
 });
 
 connectDB()
