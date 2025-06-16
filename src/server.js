@@ -1,6 +1,7 @@
 import express from 'express';
 import { connectDB } from './config/db.js';
 import { User } from './models/user.js';
+import { validateSignupData } from './utils/validation.js';
 
 const app = express();
 const port = 5000;
@@ -9,9 +10,11 @@ app.use(express.json());
 
 // api to post user
 app.post('/signup', async (req, res) => {
-   const user = new User(req.body);
-
    try {
+      validateSignupData(req);
+
+      const user = new User(req.body);
+
       await user.save();
       res.send('User added successfully');
    } catch (err) {
