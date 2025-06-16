@@ -9,7 +9,7 @@ const port = 5000;
 
 app.use(express.json());
 
-// api to post user
+// api to signup
 app.post('/signup', async (req, res) => {
    try {
       // data validation
@@ -29,6 +29,29 @@ app.post('/signup', async (req, res) => {
 
       await user.save();
       res.send('User added successfully');
+   } catch (err) {
+      res.status(404).send(`Error: ${err.message}`);
+   }
+});
+
+// api to login
+app.post('/login', async (req, res) => {
+   try {
+      const { email, password } = req.body;
+
+      const user = await User.findOne({ email: email });
+
+      if (!user) {
+         throw new Error('Invalid credentials!');
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (isPasswordValid) {
+         res.send('Login Successfully');
+      } else {
+         throw new Error('Invalid credentails!');
+      }
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
    }
