@@ -2,6 +2,7 @@ import express from 'express';
 import { connectDB } from './config/db.js';
 import { User } from './models/user.js';
 import { validateSignupData } from './utils/validation.js';
+import bcrypt from 'bcrypt';
 
 const app = express();
 const port = 5000;
@@ -11,9 +12,20 @@ app.use(express.json());
 // api to post user
 app.post('/signup', async (req, res) => {
    try {
+      // data validation
       validateSignupData(req);
 
-      const user = new User(req.body);
+      const { firstName, lastName, email, password } = req.body;
+
+      // password encryption
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      const user = new User({
+         firstName,
+         lastName,
+         email,
+         password: passwordHash,
+      });
 
       await user.save();
       res.send('User added successfully');
@@ -70,7 +82,7 @@ app.patch('/user/:id', async (req, res) => {
          throw new Error('Updates not allowed');
       }
 
-      if (req.body.skills.length >= 10) {
+      if (req.body.skills && req.body.skills.length > 10) {
          throw new Error('You cannot add more than 10 skills');
       }
 
