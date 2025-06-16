@@ -57,7 +57,9 @@ app.delete('/user', async (req, res) => {
 // api to update user data
 app.patch('/user', async (req, res) => {
    try {
-      await User.findByIdAndUpdate(req.body.id, req.body);
+      await User.findByIdAndUpdate(req.body.id, req.body, {
+         runValidators: true,
+      });
       res.send('User updated successfully');
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
