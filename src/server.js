@@ -55,7 +55,7 @@ app.delete('/user', async (req, res) => {
 });
 
 // api to update user data
-app.patch('/user', async (req, res) => {
+app.patch('/user/:id', async (req, res) => {
    try {
       const allowedUpdates = ['password', 'age', 'gender', 'about', 'skills'];
 
@@ -67,7 +67,11 @@ app.patch('/user', async (req, res) => {
          throw new Error('Updates not allowed');
       }
 
-      await User.findByIdAndUpdate(req.body.id, req.body, {
+      if (req.body.skills.length >= 10) {
+         throw new Error('You cannot add more than 10 skills');
+      }
+
+      await User.findByIdAndUpdate(req.params?.id, req.body, {
          runValidators: true,
       });
       res.send('User updated successfully');
