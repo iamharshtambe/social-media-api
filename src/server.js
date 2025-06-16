@@ -57,6 +57,16 @@ app.delete('/user', async (req, res) => {
 // api to update user data
 app.patch('/user', async (req, res) => {
    try {
+      const allowedUpdates = ['password', 'age', 'gender', 'about', 'skills'];
+
+      const isAllowedUpdates = Object.keys(req.body).every((k) =>
+         allowedUpdates.includes(k)
+      );
+
+      if (!isAllowedUpdates) {
+         throw new Error('Updates not allowed');
+      }
+
       await User.findByIdAndUpdate(req.body.id, req.body, {
          runValidators: true,
       });
