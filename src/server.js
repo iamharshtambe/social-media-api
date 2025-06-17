@@ -51,7 +51,9 @@ app.post('/login', async (req, res) => {
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (isPasswordValid) {
-         const token = jwt.sign({ _id: user._id }, 'kaboom!');
+         const token = jwt.sign({ _id: user._id }, 'kaboom!', {
+            expiresIn: '5d',
+         });
 
          res.cookie('token', token);
 
@@ -69,6 +71,14 @@ app.get('/profile', userAuth, async (req, res) => {
       const user = req.user;
 
       res.send(user);
+   } catch (err) {
+      res.status(404).send(`Error: ${err.message}`);
+   }
+});
+
+app.post('/sendConnectionRequest', userAuth, async (req, res) => {
+   try {
+      res.send(`${req.user.firstName} sent a connection request`);
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
    }
