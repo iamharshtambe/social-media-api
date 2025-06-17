@@ -3,11 +3,14 @@ import { connectDB } from './config/db.js';
 import { User } from './models/user.js';
 import { validateSignupData } from './utils/validation.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = 5000;
 
 app.use(express.json());
+app.use(cookieParser());
 
 // api to signup
 app.post('/signup', async (req, res) => {
@@ -48,10 +51,34 @@ app.post('/login', async (req, res) => {
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (isPasswordValid) {
+         const token = await jwt.sign({ _id: user._id }, 'kaboom!');
+
+         res.cookie('token', token);
+
          res.send('Login Successfully');
       } else {
          throw new Error('Invalid credentails!');
       }
+   } catch (err) {
+      res.status(404).send(`Error: ${err.message}`);
+   }
+});
+
+app.get('/profile', async (req, res) => {
+   try {
+      const { token } = req.cookies;
+
+      if (!token) {
+         throw new Error('Token is invalid');
+      }
+
+      const decodedMessage = await jwt.verify(token, 'kaboom!');
+
+      const { _id } = decodedMessage;
+
+      const user = await User.findById(_id);
+
+      res.send(user);
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
    }
