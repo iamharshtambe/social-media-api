@@ -1,10 +1,26 @@
-export function adminAuth(req, res, next) {
-   const token = '241331';
-   const isAuthorizedAdmin = token === '241331';
+import jwt from 'jsonwebtoken';
+import { User } from '../models/user.js';
 
-   if (!isAuthorizedAdmin) {
-      res.status(401).send('Unauthorized Admin');
-   } else {
+export async function userAuth(req, res, next) {
+   try {
+      const { token } = req.cookies;
+
+      if (!token) {
+         throw new Error('Invalid token');
+      }
+
+      const { _id } = jwt.verify(token, 'kaboom!');
+
+      const user = await User.findById(_id);
+
+      if (!user) {
+         throw new Error('User not found');
+      }
+
+      req.user = user;
+
       next();
+   } catch (err) {
+      res.status(404).send(`Error: ${err.message}`);
    }
 }

@@ -5,6 +5,7 @@ import { validateSignupData } from './utils/validation.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import { userAuth } from './middlewares/auth.js';
 
 const app = express();
 const port = 5000;
@@ -12,7 +13,6 @@ const port = 5000;
 app.use(express.json());
 app.use(cookieParser());
 
-// api to signup
 app.post('/signup', async (req, res) => {
    try {
       // data validation
@@ -31,13 +31,13 @@ app.post('/signup', async (req, res) => {
       });
 
       await user.save();
+
       res.send('User added successfully');
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
    }
 });
 
-// api to login
 app.post('/login', async (req, res) => {
    try {
       const { email, password } = req.body;
@@ -51,7 +51,7 @@ app.post('/login', async (req, res) => {
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (isPasswordValid) {
-         const token = await jwt.sign({ _id: user._id }, 'kaboom!');
+         const token = jwt.sign({ _id: user._id }, 'kaboom!');
 
          res.cookie('token', token);
 
@@ -64,82 +64,11 @@ app.post('/login', async (req, res) => {
    }
 });
 
-app.get('/profile', async (req, res) => {
+app.get('/profile', userAuth, async (req, res) => {
    try {
-      const { token } = req.cookies;
-
-      if (!token) {
-         throw new Error('Token is invalid');
-      }
-
-      const decodedMessage = await jwt.verify(token, 'kaboom!');
-
-      const { _id } = decodedMessage;
-
-      const user = await User.findById(_id);
+      const user = req.user;
 
       res.send(user);
-   } catch (err) {
-      res.status(404).send(`Error: ${err.message}`);
-   }
-});
-
-// api to get user by email
-app.get('/user', async (req, res) => {
-   try {
-      const users = await User.find({ email: req.body.email });
-
-      if (users.length === 0) {
-         res.status(404).send('User not found');
-      } else {
-         res.send(users);
-      }
-   } catch (err) {
-      res.status(404).send(`Error: ${err.message}`);
-   }
-});
-
-// api to get feed
-app.get('/feed', async (req, res) => {
-   try {
-      const users = await User.find({});
-      res.send(users);
-   } catch (error) {
-      res.status(404).send(`Error: ${err.message}`);
-   }
-});
-
-// api tp delete user by id
-app.delete('/user', async (req, res) => {
-   try {
-      await User.findByIdAndDelete(req.body.id);
-      res.send('User deleted successfully');
-   } catch (err) {
-      res.status(404).send(`Error: ${err.message}`);
-   }
-});
-
-// api to update user data
-app.patch('/user/:id', async (req, res) => {
-   try {
-      const allowedUpdates = ['password', 'age', 'gender', 'about', 'skills'];
-
-      const isAllowedUpdates = Object.keys(req.body).every((k) =>
-         allowedUpdates.includes(k)
-      );
-
-      if (!isAllowedUpdates) {
-         throw new Error('Updates not allowed');
-      }
-
-      if (req.body.skills && req.body.skills.length > 10) {
-         throw new Error('You cannot add more than 10 skills');
-      }
-
-      await User.findByIdAndUpdate(req.params?.id, req.body, {
-         runValidators: true,
-      });
-      res.send('User updated successfully');
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
    }
