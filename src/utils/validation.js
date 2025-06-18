@@ -13,11 +13,24 @@ export function validateSignupData(req) {
 }
 
 export function validateEditProfileData(req) {
-   const allowedEditFields = [firstName, lastName, age, gender, about, skills];
+   const allowedEditFields = [
+      'firstName',
+      'lastName',
+      'age',
+      'gender',
+      'about',
+      'skills',
+   ];
 
    const isAllowed = Object.keys(req.body).every((field) =>
       allowedEditFields.includes(field)
    );
 
    return isAllowed;
+}
+
+export function validatePassword(req) {
+   const password = validator.isStrongPassword(req.body.password);
+
+   return password;
 }
