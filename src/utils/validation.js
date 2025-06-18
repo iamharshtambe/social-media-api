@@ -28,9 +28,3 @@ export function validateEditProfileData(req) {
 
    return isAllowed;
 }
-
-export function validatePassword(req) {
-   const password = validator.isStrongPassword(req.body.password);
-
-   return password;
-}

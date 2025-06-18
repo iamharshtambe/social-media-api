@@ -1,10 +1,8 @@
 import express from 'express';
 import { userAuth } from '../middlewares/auth.js';
-import {
-   validateEditProfileData,
-   validatePassword,
-} from '../utils/validation.js';
+import { validateEditProfileData } from '../utils/validation.js';
 import bcrypt from 'bcrypt';
+import validator from 'validator';
 
 export const profileRouter = express.Router();
 
@@ -42,13 +40,24 @@ profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
 
 profileRouter.patch('/profile/edit/password', userAuth, async (req, res) => {
    try {
-      if (!validatePassword(req)) {
+      const { currentPassword, password } = req.body;
+
+      const loggedInUser = req.user;
+
+      const isMatch = await bcrypt.compare(
+         currentPassword,
+         loggedInUser.password
+      );
+
+      if (!isMatch) {
+         throw new Error('Current password is incorrect');
+      }
+
+      if (!validator.isStrongPassword(password)) {
          throw new Error('Enter a strong password');
       }
 
-      const passwordHash = await bcrypt.hash(req.body.password, 10);
-
-      const loggedInUser = req.user;
+      const passwordHash = await bcrypt.hash(password, 10);
 
       loggedInUser.password = passwordHash;
 
