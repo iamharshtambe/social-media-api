@@ -55,3 +55,11 @@ authRouter.post('/login', async (req, res) => {
       res.status(404).send(`Error: ${err.message}`);
    }
 });
+
+authRouter.post('/logout', (req, res) => {
+   res.cookie('token', null, {
+      expires: new Date(Date.now()),
+   });
+
+   res.send('Logut Successfully');
+});
