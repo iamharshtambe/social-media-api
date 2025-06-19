@@ -13,7 +13,7 @@ const connectionRequestSchema = new mongoose.Schema(
       status: {
          type: String,
          enum: {
-            values: [interested, notInterested, accepted, rejected],
+            values: ['interested', 'notInterested', 'accepted', 'rejected'],
             message: '{VALUE} is invalid status',
          },
          required: true,
@@ -22,7 +22,7 @@ const connectionRequestSchema = new mongoose.Schema(
    { timestamps: true }
 );
 
-export const connectionRequest = mongoose.model(
+export const ConnectionRequest = mongoose.model(
    'ConnectionRequest',
    connectionRequestSchema
 );
