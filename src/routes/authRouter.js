@@ -5,7 +5,7 @@ import { User } from '../models/user.js';
 
 export const authRouter = express.Router();
 
-authRouter.post('/signup', async (req, res) => {
+authRouter.post('/auth/signup', async (req, res) => {
    try {
       validateSignupData(req);
 
@@ -28,7 +28,7 @@ authRouter.post('/signup', async (req, res) => {
    }
 });
 
-authRouter.post('/login', async (req, res) => {
+authRouter.post('/auth/login', async (req, res) => {
    try {
       const { email, password } = req.body;
 
@@ -56,7 +56,7 @@ authRouter.post('/login', async (req, res) => {
    }
 });
 
-authRouter.post('/logout', (req, res) => {
+authRouter.post('/auth/logout', (req, res) => {
    res.cookie('token', null, {
       expires: new Date(Date.now()),
    });
