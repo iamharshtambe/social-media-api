@@ -55,13 +55,6 @@ requestRouter.post(
    }
 );
 
-/*
-allowed status
-H -> R : toUserId = loggedInUser
-status : interested -> accept/reject 
-requestId = valid 
-*/
-
 requestRouter.post(
    '/request/review/:status/:requestId',
    userAuth,
