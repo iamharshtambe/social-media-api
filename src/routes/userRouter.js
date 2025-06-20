@@ -21,3 +21,5 @@ userRouter.get('/user/request/received', userAuth, async (req, res) => {
       res.status(404).send(`Error: ${err.message}`);
    }
 });
+
+userRouter.get('/user/request/connections', userAuth, (req, res) => {});
