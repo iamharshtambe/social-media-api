@@ -31,9 +31,16 @@ userRouter.get('/user/request/connections', userAuth, async (req, res) => {
             { toUserId: loggedInUser._id, status: 'accepted' },
             { fromUserId: loggedInUser._id, status: 'accepted' },
          ],
-      }).populate('fromUserId', ['firstName', 'lastName']);
+      })
+         .populate('fromUserId', ['firstName', 'lastName'])
+         .populate('toUserId', ['firstName', 'lastName']);
 
-      const data = connectionRequest.map((row) => row.fromUserId);
+      const data = connectionRequest.map((row) => {
+         if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
+            return row.toUserId;
+         }
+         return row.fromUserId;
+      });
 
       res.json({
          message: 'You have following connections:',
