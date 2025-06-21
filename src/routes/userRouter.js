@@ -50,3 +50,5 @@ userRouter.get('/user/request/connections', userAuth, async (req, res) => {
       res.status(404).send(`Error: ${err.message}`);
    }
 });
+
+userRouter.get('/user/request/feed', userAuth, (req, res) => {});
