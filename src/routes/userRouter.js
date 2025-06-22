@@ -51,4 +51,30 @@ userRouter.get('/user/request/connections', userAuth, async (req, res) => {
    }
 });
 
-userRouter.get('/user/request/feed', userAuth, (req, res) => {});
+userRouter.get('/user/request/feed', userAuth, async (req, res) => {
+   try {
+      const loggedInUser = req.user;
+
+      //  connection requests (sent + received)
+      const connectionRequest = await ConnectionRequest.find({
+         $or: [
+            { fromUserId: loggedInUser._id },
+            { toUserId: loggedInUser._id },
+         ],
+      }).select('fromUserId toUserId');
+   } catch (err) {
+      res.status(404).send(`Error: ${err.message}`);
+   }
+});
+
+/*
+A ?
+Everybody whom A have not sent request
+
+Ignored 
+Should not see 
+
+Already connected 
+
+A should not see A 
+*/
