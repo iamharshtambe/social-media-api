@@ -75,7 +75,7 @@ userRouter.get('/user/request/feed', userAuth, async (req, res) => {
             { _id: { $nin: Array.from(usersToHideFromFeed) } },
             { _id: { $ne: loggedInUser._id } },
          ],
-      });
+      }).select('firstName lastName');
 
       res.send(users);
    } catch (err) {
