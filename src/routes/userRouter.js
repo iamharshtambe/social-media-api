@@ -55,13 +55,18 @@ userRouter.get('/user/request/feed', userAuth, async (req, res) => {
    try {
       const loggedInUser = req.user;
 
-      //  connection requests (sent + received)
+      // connection requests (sent + received)
       const connectionRequest = await ConnectionRequest.find({
          $or: [
             { fromUserId: loggedInUser._id },
             { toUserId: loggedInUser._id },
          ],
-      }).select('fromUserId toUserId');
+      })
+         .select('fromUserId toUserId')
+         .populate('fromUserId', 'firstName')
+         .populate('toUserId', 'firstName');
+
+      res.send(connectionRequest);
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
    }
