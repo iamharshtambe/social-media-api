@@ -1,6 +1,7 @@
 import express from 'express';
 import { userAuth } from '../middlewares/auth.js';
 import { ConnectionRequest } from '../models/ConnectionRequest.js';
+import { User } from '../models/User.js';
 
 export const userRouter = express.Router();
 
@@ -61,25 +62,23 @@ userRouter.get('/user/request/feed', userAuth, async (req, res) => {
             { fromUserId: loggedInUser._id },
             { toUserId: loggedInUser._id },
          ],
-      })
-         .select('fromUserId toUserId')
-         .populate('fromUserId', 'firstName')
-         .populate('toUserId', 'firstName');
+      }).select('fromUserId toUserId');
 
-      res.send(connectionRequest);
+      const usersToHideFromFeed = new Set();
+      connectionRequest.forEach((connectionReq) => {
+         usersToHideFromFeed.add(connectionReq.fromUserId.toString());
+         usersToHideFromFeed.add(connectionReq.toUserId.toString());
+      });
+
+      const users = await User.find({
+         $and: [
+            { _id: { $nin: Array.from(usersToHideFromFeed) } },
+            { _id: { $ne: loggedInUser._id } },
+         ],
+      });
+
+      res.send(users);
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);
    }
 });
-
-/*
-A ?
-Everybody whom A have not sent request
-
-Ignored 
-Should not see 
-
-Already connected 
-
-A should not see A 
-*/
