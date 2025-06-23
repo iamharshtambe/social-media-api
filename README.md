@@ -75,12 +75,6 @@ npm run dev
 
 ## API Documentation
 
-### Postman Collection
-
-📋 **[View API Documentation & Test Endpoints](https://www.postman.com/harshtambe-1653464/social-media-backend)**
-
-The complete API documentation with example requests and responses is available in the Postman workspace above.
-
 ### Available Routes
 
 -  **Authentication:** `/auth` - User registration and login
