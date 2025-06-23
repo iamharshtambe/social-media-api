@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export async function userAuth(req, res, next) {
    try {
@@ -9,7 +12,7 @@ export async function userAuth(req, res, next) {
          throw new Error('Invalid token');
       }
 
-      const { _id } = jwt.verify(token, 'kaboom!');
+      const { _id } = jwt.verify(token, process.env.JWT_SECRET);
 
       const user = await User.findById(_id);
 
@@ -18,7 +21,6 @@ export async function userAuth(req, res, next) {
       }
 
       req.user = user;
-
       next();
    } catch (err) {
       res.status(404).send(`Error: ${err.message}`);

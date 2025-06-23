@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const userSchema = new mongoose.Schema(
    {
@@ -62,7 +64,7 @@ const userSchema = new mongoose.Schema(
 userSchema.methods.getJWT = async function () {
    const user = this;
 
-   const token = await jwt.sign({ _id: user._id }, 'kaboom!', {
+   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '5d',
    });
 
